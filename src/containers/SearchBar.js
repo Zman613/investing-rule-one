@@ -25,6 +25,7 @@ class SearchBar extends Component {
 
   handleResultSelect = (e, { result }) => {
     this.props.updateTicker(result)
+    document.activeElement.blur()
     this.setState({ value: result.symbol })
   }
 
@@ -32,7 +33,7 @@ class SearchBar extends Component {
     this.setState({ isLoading: true, value })
 
     setTimeout(() => {
-      if (this.state.value.length < 1) return this.setState({initialState, tickers: this.state.tickers})
+      if (this.state.value.length < 1) return this.setState({...initialState, tickers: this.state.tickers})
 
       if (this.state.value.length > 1){
         const re = new RegExp(_.escapeRegExp(this.state.value), 'i')
@@ -53,7 +54,7 @@ class SearchBar extends Component {
       <div>
         <Menu fixed='top' inverted>
           <Container>
-          <Menu.Item active={false}>
+          <Menu.Item active={false} onClick={() => {this.props.updateTicker({}); this.setState({...initialState, tickers: this.state.tickers})}}>
             <Image src='/warren-buffet.jpg' style={{ marginRight: '1.5em' }} avatar size='mini'  />
             Rule One Investing
           </Menu.Item>

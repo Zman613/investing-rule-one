@@ -2,6 +2,7 @@ import React from 'react';
 import '../App.css';
 import SearchBar from '../containers/SearchBar';
 import BigFour from '../containers/BigFour';
+import {Image, Header} from 'semantic-ui-react'
 
 
 class App extends React.Component {
@@ -20,7 +21,7 @@ class App extends React.Component {
   }
 
   componentDidUpdate(prevProps, prevState){
-    if (prevState.currentTicker !== this.state.currentTicker){
+    if (this.state.currentTicker !== {} && prevState.currentTicker !== this.state.currentTicker){
       this.fetchStock()
     }
   }
@@ -46,7 +47,14 @@ class App extends React.Component {
     return (
       <div className="App">
         <SearchBar updateTicker={this.updateTicker} />
-        {incomeStatement.financials && balanceSheet.financials && cashFlowStatement.financials && <BigFour currentTicker={currentTicker} incomeStatement={incomeStatement} balanceSheet={balanceSheet} cashFlowStatement={cashFlowStatement} />}
+        {incomeStatement.financials && balanceSheet.financials && cashFlowStatement.financials ? 
+        <div>
+        <BigFour currentTicker={currentTicker} incomeStatement={incomeStatement} balanceSheet={balanceSheet} cashFlowStatement={cashFlowStatement} />
+        </div> : 
+        <div>
+          <Header as='h1' style={{marginTop: '7em !important', paddingTop: '7em'}}>Rule One Investing</Header>
+          <Image src='/warren-buffet.jpg' centered circular size='medium' />
+        </div>}
       </div>
     );
   }
