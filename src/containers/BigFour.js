@@ -36,7 +36,7 @@ export default class BigFour extends Component {
       this.setState(prevState => ({
         years: [...prevState.years, year.date],
         netIncome: [...prevState.netIncome, parseFloat(year['Net Income'])],
-        bookValue: [...prevState.bookValue, parseFloat(balanceSheet.financials[i]['Total shareholders equity']) + Math.abs(parseFloat(cashFlowStatement.financials[i]['Dividend payments']))],
+        bookValue: balanceSheet.financials[i] ? [...prevState.bookValue, parseFloat(balanceSheet.financials[i]['Total shareholders equity']) + Math.abs(parseFloat(cashFlowStatement.financials[i]['Dividend payments']))] : [...prevState.bookValue, 'Not Available'],
         sales: [...prevState.sales, parseFloat(year['Revenue'])],
         profit: [...prevState.profit, parseFloat(year['Gross Profit'])],
         operatingCash: [...prevState.operatingCash, parseFloat(cashFlowStatement.financials[i]['Operating Cash Flow'])]
@@ -45,7 +45,6 @@ export default class BigFour extends Component {
   }
 
   componentDidMount(){
-    console.log('hit')
     this.updateState()
     this.setState(prevState => ({
       niPercentage: this.percentage(prevState.netIncome),
@@ -58,7 +57,6 @@ export default class BigFour extends Component {
 
   componentDidUpdate(prevProps){
     if (prevProps !== this.props){
-      console.log('ping')
       this.updateState()
       this.setState(prevState => ({
         niPercentage: this.percentage(prevState.netIncome),
@@ -74,14 +72,15 @@ export default class BigFour extends Component {
     let newArr = ['']
     let l = array.length
     for (let i = 0; i < l - 1; i++) {
-      if (Math.sign(array[l - (i + 1)]) === 1 || 0 ){
+      if (Math.sign(array[l - (i + 1)]) === 1 || Math.sign(array[l - (i + 1)]) === 0 ){
         let s = array[l - (i + 2)] - array[l - (i + 1)]
-        newArr.push(this.formatterP.format(s / array[l - (i + 1)]))
-      } else if (Math.sign(array[l - (i + 1)]) === -1 || -0){
+        let a = ((array[l - (i + 1)]) === 0) ? 1 : array[l - (i + 1)]
+        newArr.push(this.formatterP.format(s / a))
+      } else if (Math.sign(array[l - (i + 1)]) === -1 || Math.sign(array[l - (i + 1)]) ===  -0){
         let s = array[l - (i + 1)] - array[l - (i + 2)]
-        newArr.push(this.formatterP.format(s / array[l - (i + 1)]))
+        let a = ((array[l - (i + 1)]) === 0) ? -1 : array[l - (i + 1)]
+        newArr.push(this.formatterP.format(s / a))
       } else {
-        console.log('NaN: ', Math.sign(array[l - (i + 1)]) )
         newArr.push('NaN')
       }
     }
@@ -95,11 +94,9 @@ export default class BigFour extends Component {
   render(){
     const {currentTicker} = this.props
     const {years, netIncome, niPercentage, bookValue, bvPercentage, sales, sPercentage, profit, pPercentage, operatingCash, ocPercentage, isTrue} = this.state
-    console.log('net income: ', this.state.netIncome)
-    console.log('state: ', this.state)
     return(
       <div>
-        <Container style={{ marginTop: '7em', marginLeft: '2em', marginRight: '2em', paddingLeft: '2em', paddingRight: '2em', paddingBottom: '2em' }} fluid>
+        <Container style={{ marginTop: '7em', marginLeft: '2em', marginRight: '2em', paddingLeft: '2em', paddingRight: '2em', paddingBottom: '3em' }} fluid>
           <Header as='h1' style={{marginBottom: '0'}}>{currentTicker.name}</Header>
           <span>{this.formatter.format(currentTicker.price)}</span>
           <Header as='h3'>The Big Four Numbers</Header>
@@ -118,15 +115,15 @@ export default class BigFour extends Component {
               </Table.Row>
               <Table.Row textAlign='center'>
                 <Table.Cell>Percentage</Table.Cell>
-                {niPercentage.map((year, i) => <Table.Cell key={i} positive={parseFloat(year) >= 10} negative={Math.sign(parseFloat(year)) === -1} >{year}</Table.Cell>)}
+                {niPercentage.map((year, i) => <Table.Cell style={{wordBreak: 'break-all'}} key={i} positive={parseFloat(year) >= 10} negative={Math.sign(parseFloat(year)) === -1} >{year}</Table.Cell>)}
               </Table.Row>
               <Table.Row textAlign='center'>
                 <Table.Cell>Book Value</Table.Cell>
-                {bookValue.map((year, i) => <Table.Cell key={i} style={{wordBreak: 'break-all'}}>{this.formatter.format(bookValue[bookValue.length - (i + 1)])}</Table.Cell>)}
+                {bookValue.map((year, i) => <Table.Cell key={i} style={{wordBreak: 'break-all'}}>{typeof(bookValue[bookValue.length - (i + 1)]) === 'number' ? this.formatter.format(bookValue[bookValue.length - (i + 1)]) : bookValue[bookValue.length - (i + 1)]}</Table.Cell>)}
               </Table.Row>
               <Table.Row textAlign='center'>
                 <Table.Cell>Percentage</Table.Cell>
-                {bvPercentage.map((year, i) => <Table.Cell key={i} positive={parseFloat(year) >= 10} negative={Math.sign(parseFloat(year)) === -1} >{year}</Table.Cell>)}
+                {bvPercentage.map((year, i) => <Table.Cell style={{wordBreak: 'break-all'}} key={i} positive={parseFloat(year) >= 10} negative={Math.sign(parseFloat(year)) === -1} >{year}</Table.Cell>)}
               </Table.Row>
               <Table.Row textAlign='center'> 
                 <Table.Cell onClick={() => this.show()}>Sales</Table.Cell>
@@ -134,7 +131,7 @@ export default class BigFour extends Component {
               </Table.Row>
               <Table.Row textAlign='center'>
                 <Table.Cell>Percentage</Table.Cell>
-                {sPercentage.map((year, i) => <Table.Cell key={i} positive={parseFloat(year) >= 10} negative={Math.sign(parseFloat(year)) === -1} >{year}</Table.Cell>)}
+                {sPercentage.map((year, i) => <Table.Cell style={{wordBreak: 'break-all'}} key={i} positive={parseFloat(year) >= 10} negative={Math.sign(parseFloat(year)) === -1} >{year}</Table.Cell>)}
               </Table.Row>
               {isTrue && <Table.Row textAlign='center'> 
                 <Table.Cell>Profit</Table.Cell>
@@ -142,7 +139,7 @@ export default class BigFour extends Component {
               </Table.Row>}
               {isTrue && <Table.Row textAlign='center'>
                 <Table.Cell>Percentage</Table.Cell>
-                {pPercentage.map((year, i) => <Table.Cell key={i} positive={parseFloat(year) >= 10} negative={Math.sign(parseFloat(year)) === -1} >{year}</Table.Cell>)}
+                {pPercentage.map((year, i) => <Table.Cell style={{wordBreak: 'break-all'}} key={i} positive={parseFloat(year) >= 10} negative={Math.sign(parseFloat(year)) === -1} >{year}</Table.Cell>)}
               </Table.Row>}
               <Table.Row textAlign='center'> 
                 <Table.Cell>Operating Cash</Table.Cell>
@@ -150,7 +147,7 @@ export default class BigFour extends Component {
               </Table.Row>
               <Table.Row textAlign='center'>
                 <Table.Cell>Percentage</Table.Cell>
-                {ocPercentage.map((year, i) => <Table.Cell key={i} positive={parseFloat(year) >= 10} negative={Math.sign(parseFloat(year)) === -1} >{year}</Table.Cell>)}
+                {ocPercentage.map((year, i) => <Table.Cell style={{wordBreak: 'break-all'}} key={i} positive={parseFloat(year) >= 10} negative={Math.sign(parseFloat(year)) === -1} >{year}</Table.Cell>)}
               </Table.Row>
             </Table.Body>
           </Table>

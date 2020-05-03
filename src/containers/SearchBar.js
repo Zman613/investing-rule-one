@@ -1,4 +1,4 @@
-import { Search, Menu, Image, Container } from 'semantic-ui-react'
+import { Search, Menu, Image, Container, Dropdown} from 'semantic-ui-react'
 import React, {Component} from 'react'
 import _ from 'lodash'
 
@@ -49,7 +49,6 @@ class SearchBar extends Component {
 
   render(){
     const { isLoading, value, results } = this.state
-    // console.log(this.props)
     return (
       <div>
         <Menu fixed='top' inverted>
@@ -70,6 +69,14 @@ class SearchBar extends Component {
               {...{}}
             />
           </Menu.Item>
+          {!!this.props.ticker.symbol? <Dropdown icon='bars' item simple={!!this.props.ticker.symbol} direction='left'>
+              <Dropdown.Menu>
+                <Dropdown.Item>All</Dropdown.Item>
+                <Dropdown.Item>Big Four Numbers</Dropdown.Item>
+                <Dropdown.Item>Management</Dropdown.Item>
+                <Dropdown.Item>Price</Dropdown.Item>
+              </Dropdown.Menu>
+          </Dropdown>: <Dropdown icon='bars' item simple={!!this.props.ticker.symbol} direction='left'></Dropdown>}
           </Container>
         </Menu>
       </div>
