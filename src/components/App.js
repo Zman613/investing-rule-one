@@ -55,11 +55,11 @@ class App extends React.Component {
   }
 
   render(){
-    // console.log('ticker: ', this.state.currentTicker)
-    // console.log('income: ', this.state.incomeStatement)
-    // console.log('Balance: ', this.state.balanceSheet)
-    // console.log('Cash: ', this.state.cashFlowStatement)
-    // console.log('Ev: ', this.state.enterpriseValue)
+    console.log('ticker: ', this.state.currentTicker)
+    console.log('income: ', this.state.incomeStatement)
+    console.log('Balance: ', this.state.balanceSheet)
+    console.log('Cash: ', this.state.cashFlowStatement)
+    console.log('Ev: ', this.state.enterpriseValue)
     const {incomeStatement, balanceSheet, cashFlowStatement, currentTicker, enterpriseValue, financialRatio} = this.state
     return (
       <div className="App">
