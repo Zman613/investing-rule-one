@@ -41,13 +41,15 @@ export default class Price extends Component {
       eps = eps * (this.state.wgr / 100 + 1)
     }
     incomeStatement.financials.forEach((year, i) => {
-      let shares = parseFloat(ev[i]['Number of Shares'])
+      let shares = !!ev[i] ? parseFloat(ev[i]['Number of Shares']) : 0
 
       // margin of safety price - highest pe of last 10 years
-      pe = ratio[i]['investmentValuationRatios']['priceEarningsRatio'] > pe ? ratio[i]['investmentValuationRatios']['priceEarningsRatio'] : pe
+      if (ratio[i]){
+        pe = ratio[i]['investmentValuationRatios']['priceEarningsRatio'] > pe ? ratio[i]['investmentValuationRatios']['priceEarningsRatio'] : pe
+      }
 
       // payback time
-      let freeCashFlow = parseFloat(cash[i]['Free Cash Flow'])
+      let freeCashFlow = parseFloat(cash[i]['Free Cash Flow']) ? parseFloat(cash[i]['Free Cash Flow']) : 0
       let sum = 0
       let lastNum = freeCashFlow
       for (let x = 0; x < 8; x++) {
